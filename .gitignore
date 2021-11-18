@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+QueryData.R
+data
+graphs
+results
+.RDataTmp
+Queries
+Thumbs.db
