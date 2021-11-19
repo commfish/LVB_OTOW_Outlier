@@ -16,6 +16,8 @@
 #####Load packages######
 library(FSA)
 library(nlstools)
+library(ggplot2)
+library(tcltk2)
 library(propagate)
 library(tidyverse)
 library(readxl)
@@ -25,13 +27,17 @@ library(readxl)
 dataBDRF<-read_excel(file.choose()) 
 dataBDRF<-read_csv(file=file.choose())
 
+
 #Rename columns
+
+
 CN_age<-'AGE'
 CN_length<-'SPECIMEN.LENGTH'
 CN_sex<-'GENDER_CODE'
 CN_species<-'FIELD_SPECIES_CODE'
 CN_otoW<-'AGE_STRUCTURE.WEIGHT'
 dataBDRF<- dataBDRF %>% rename(age=CN_age,length=CN_length,sex=CN_sex,species=CN_species,otoW=CN_otoW)
+
 
 if(max(dataBDRF$length,na.rm = TRUE)<200){
   dataBDRF$length<-dataBDRF$length*10 #convert cm to mm length
