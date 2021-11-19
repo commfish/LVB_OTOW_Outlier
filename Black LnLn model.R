@@ -1,3 +1,4 @@
+
 #########################Backcalc LN:LN ######################
 ###Based on modeling from Ogle, D.H. 2015. FSA: Fisheries Stock Analysis. R package version 0.7.7.###
 
@@ -7,9 +8,15 @@
 #alpha for prediction intervals is set to 0.99 (99% PIs), model can take values greater then 0.99 for wider intervals
 #plots are jittered by adding decimal values to age, consider for visual comparisons
 
+#########################Backcalc LN:LN ######################
+##Updated 11/18/2021 Kevin McNeel 
+
+#Columns used are age, sex, length, otoW
+
 ########################Load data#####################
 
 ###Region 1 data
+
 ##### Load data#########
 
 dataBDRF<-read_excel(file.choose()) 
@@ -23,6 +30,26 @@ CN_species<-'FIELD_SPECIES_CODE'
 CN_otoW<-'AGE_STRUCTURE.WEIGHT'
 dataBDRF<- dataBDRF %>% rename(age=CN_age,length=CN_length,sex=CN_sex,species=CN_species,otoW=CN_otoW)
 dataBRF<-subset(dataBDRF,dataBDRF$species==142)
+
+library(readxl)
+dataBDRF<-read_excel("data/Black_R1_142_154_172_173_7.2.2021.xlsx", 
+                     col_types = c("text", "text", "text", "text", "skip", "date", 
+                                   "text", "text", "numeric", "numeric", "text", "skip", 
+                                   "text", "skip", "numeric", "numeric", "numeric", "numeric", "text", "numeric"))
+names(dataBDRF)<-c("area","year","sample","ID","date","fishery","project","length",
+                   "weight","species","sex","otoL","otoH","otoW","age","common","RA")
+dataBRF<-subset(dataBDRF,dataBDRF$species==142)
+
+###Region 4 data
+library(readr)
+dataBDRF<-CF_2017_2021_Corrected <- read_csv("data/CF_2017_2021_Corrected.csv",
+                                              col_types = cols(Sample_Date = col_date(format = "%m/%d/%Y")))
+names(dataBDRF2)<-c("year","Vessel_Name","area","Processor_Name","Port","Section",       
+                    "Gear_Code","Delivery","Interview","date","species","sex","length","Maturity","weight","Sampler",
+                    "Sample_Number","Otolith_Id","age","otoW","Weight_Right","Length_Left","Height_Left","Length_Right",  
+                    "Height_Right","Cryst_Left","Cryst_Right","check","change")
+dataBDRF2$length<-dataBDRF2$length*10 #convert cm to mm
+dataBRF2<-subset(dataBDRF2,dataBDRF2$species==142)
 
 ###############################Model#######################################
 #ln.mod<-lm(log(otoW)~I(log(age)),dataBRF) #linear Ln model
