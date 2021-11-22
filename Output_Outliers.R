@@ -55,8 +55,8 @@ LN<-ggplot(dataAll1) +
 plot_grid(LVB, LN, labels = "AUTO",ncol=1,nrow=2)
 
 
-table(filter(dataAll1,species=="142")$outlierLVB, useNA = "always")
-table(filter(dataAll1,species=="142")$outlierLN, useNA = "always")
+table(filter(dataAll1,species==Tspecies)$outlierLVB, useNA = "always")
+table(filter(dataAll1,species==Tspecies)$outlierLN, useNA = "always")
 
 outliers<- dataAll1 %>% filter(outlierLVB=="out" | outlierLN=="out") 
 write.csv(outliers, "outliers.csv", sep=",", row.names=FALSE)

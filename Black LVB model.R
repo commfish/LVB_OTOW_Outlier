@@ -38,23 +38,27 @@ CN_species<-'FIELD_SPECIES_CODE'
 CN_otoW<-'AGE_STRUCTURE.WEIGHT'
 dataBDRF<- dataBDRF %>% rename(age=CN_age,length=CN_length,sex=CN_sex,species=CN_species,otoW=CN_otoW)
 
-
 if(max(dataBDRF$length,na.rm = TRUE)<200){
   dataBDRF$length<-dataBDRF$length*10 #convert cm to mm length
 }
 
-dataBRF<-subset(dataBDRF,dataBDRF$species==142)
+###Assign target species
+Tspecies<-"142"
+dataBDRF$species<-character(dataBDRF$species)
+dataBRF<-subset(dataBDRF,dataBDRF$species==Tspecies)
 
 #####Plot data#######
 
 ggplot(dataBDRF,aes(age,length,col=as.factor(species)),)+
   geom_point(size=2,position=position_dodge(width = 1))+
+  labs(col="Species")+
   theme_classic()
 
 #####Model######
-
-svTypical<-vbStarts(length~age,data=dataBRF,fixed = list (t0=0),plot=TRUE)
-#svTypical <- list(Linf=530,K=0.09,t0=-1)# black rockfish starting values 
+table(dataBRF$length)
+svTypical<-vbStarts(length~age,data=dataBRF,fixed=list(K=0.1,t0=-1),plot=TRUE,na.omit=TRUE)
+?vbStarts()
+svTypical <- list(Linf=530,K=0.09,t0=-1)# black rockfish starting values 
 #svTypical4 <- list(Linf=515,K=0.2,t0=.4)# alternative black rockfish starting values
 vbTypical <- vbFuns() # get RHS of typical function
 fitTypical <- nls(length~vbTypical(age,Linf,K,t0),data=dataBRF,start=svTypical)
@@ -100,7 +104,7 @@ pred.predsumF$age<-seq(0,60,by=1)
 plot(length ~ age, data=dataBRF,ylab= "Total Length (mm)",xlab="Age",pch=c(3),cex=0,ylim=c(10,650))
 polygon(c(pred.predsum$age, rev(pred.predsum$age)), c(pred.predsum[, 11],rev(pred.predsum[, 12])), col = rgb(red=0,green=0,blue=0,alpha=0.2),lty = 0)
 points(length ~ I(age), data=dataBRF, col= rgb(red=0,blue=0,green=0,alpha=0.2),pch=19,cex=1)# R1 Black
-points(length ~ I(age+0.2), data=dataBDRF, subset=species!="142",col=rgb(red=0,green=.8,blue=0,alpha=0.2),pch=19,cex=1)#R1 Dusky
+points(length ~ I(age+0.2), data=dataBDRF, subset=species!=Tspecies,col=rgb(red=0,green=.8,blue=0,alpha=0.2),pch=19,cex=1)#R1 Dusky
 legend("bottomright",c("Black RF","Other"),pch=c(19,19),col=c("black",rgb(red=0,blue=0,green=.8,alpha=0.7)),bty = "n")
 
 #Sex specific
