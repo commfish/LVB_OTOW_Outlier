@@ -28,8 +28,8 @@ dataBDRF<-read_excel(file.choose())
 dataBDRF<-read_csv(file=file.choose())
 
 
-#Rename columns
-
+#Rename columns####
+#Rename the 'FIELDS' with the columns from your data to change them to the naming convention used in the script
 
 CN_age<-'AGE'
 CN_length<-'SPECIMEN.LENGTH'
@@ -43,7 +43,7 @@ if(max(dataBDRF$length,na.rm = TRUE)<200){
 }
 
 ###Assign target species
-Tspecies<-"142"
+Tspecies<-"142" #Target species name from species column
 dataBDRF$species<-character(dataBDRF$species)
 dataBRF<-subset(dataBDRF,dataBDRF$species==Tspecies)
 
@@ -55,10 +55,8 @@ ggplot(dataBDRF,aes(age,length,col=as.factor(species)),)+
   theme_classic()
 
 #####Model######
-table(dataBRF$length)
 svTypical<-vbStarts(length~age,data=dataBRF,fixed=list(K=0.1,t0=-1),plot=TRUE,na.omit=TRUE)
-?vbStarts()
-svTypical <- list(Linf=530,K=0.09,t0=-1)# black rockfish starting values 
+#svTypical <- list(Linf=530,K=0.09,t0=-1)# black rockfish starting values 
 #svTypical4 <- list(Linf=515,K=0.2,t0=.4)# alternative black rockfish starting values
 vbTypical <- vbFuns() # get RHS of typical function
 fitTypical <- nls(length~vbTypical(age,Linf,K,t0),data=dataBRF,start=svTypical)
@@ -70,32 +68,30 @@ overview(fitTypical)
 summary(fitTypical)
 fitPlot(fitTypical,xlab="Age",ylab="Total Length (mm)",main="")
 residPlot(fitTypical)
-hist(residuals(fitTypical),main="")
 
 overview(fitTypicalM)
 summary(fitTypicalM)
 fitPlot(fitTypicalM,xlab="Age",ylab="Total Length (mm)",main="")
 residPlot(fitTypicalM)
-hist(residuals(fitTypicalM),main="")
 
 overview(fitTypicalF)
 summary(fitTypicalF)
 fitPlot(fitTypicalF,xlab="Age",ylab="Total Length (mm)",main="")
 residPlot(fitTypicalF)
-hist(residuals(fitTypicalF),main="")
 
 #########################Monte Carlo CI and PI##################################
 
-alphaLVB=0.01
-pred.pred<-predictNLS(fitTypical, newdata=data.frame(age=seq(0,60,by=1)),interval="pred",nsim = 100000,alpha=alphaLVB)
-pred.predM<-predictNLS(fitTypicalM, newdata=data.frame(age=seq(0,60,by=1)),interval="pred",nsim = 100000,alpha=alphaLVB)
-pred.predF<-predictNLS(fitTypicalF, newdata=data.frame(age=seq(0,60,by=1)),interval="pred",nsim = 100000,alpha=alphaLVB)
+alphaLVB=0.01 #set alpha level for prediction interval
+MaxAge=60 #set maximum age for prediction range
+pred.pred<-predictNLS(fitTypical, newdata=data.frame(age=seq(0,MaxAge,by=1)),interval="pred",nsim = 100000,alpha=alphaLVB)
+pred.predM<-predictNLS(fitTypicalM, newdata=data.frame(age=seq(0,MaxAge,by=1)),interval="pred",nsim = 100000,alpha=alphaLVB)
+pred.predF<-predictNLS(fitTypicalF, newdata=data.frame(age=seq(0,MaxAge,by=1)),interval="pred",nsim = 100000,alpha=alphaLVB)
 pred.predsum<-pred.pred$summary
-pred.predsum$age<-seq(0,60,by=1)
+pred.predsum$age<-seq(0,MaxAge,by=1)
 pred.predsumM<-pred.predM$summary
-pred.predsumM$age<-seq(0,60,by=1)
+pred.predsumM$age<-seq(0,MaxAge,by=1)
 pred.predsumF<-pred.predF$summary
-pred.predsumF$age<-seq(0,60,by=1)
+pred.predsumF$age<-seq(0,MaxAge,by=1)
 
 
 ########################Plot estimates##########################################
