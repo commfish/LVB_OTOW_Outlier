@@ -13,23 +13,34 @@
 
 #Columns used are age, sex, length, otoW
 
+#####Load packages######
+library(FSA)
+library(ggplot2)
+library(tcltk2)
+library(tidyverse)
+library(readxl)
+
+
 ########################Load data#####################
-
-###Region 1 data
-
-##### Load data#########
 
 dataBDRF<-read_excel(file.choose()) 
 dataBDRF<-read_csv(file=file.choose())
 
 #Rename columns
+#Rename the 'FIELDS' with the columns from your data to change them to the naming convention used in the script
+
 CN_age<-'AGE'
 CN_length<-'SPECIMEN.LENGTH'
 CN_sex<-'GENDER_CODE'
 CN_species<-'FIELD_SPECIES_CODE'
 CN_otoW<-'AGE_STRUCTURE.WEIGHT'
 dataBDRF<- dataBDRF %>% rename(age=CN_age,length=CN_length,sex=CN_sex,species=CN_species,otoW=CN_otoW)
-Tspecies<-"142"
+
+if(max(dataBDRF$length,na.rm = TRUE)<200){
+  dataBDRF$length<-dataBDRF$length*10 #convert cm to mm length
+}
+
+Tspecies<-"142" #set target species
 dataBDRF$species<-character(dataBDRF$species)
 dataBRF<-subset(dataBDRF,dataBDRF$species==Tspecies)
 
@@ -51,8 +62,8 @@ points(otoW ~ I(age+0.2), data=dataBRF,col=rgb(red=0.1,green=0.1,blue=0.1,alpha=
 points(otoW ~ I(age-0.2), data=dataBDRF, subset=species !=Tspecies,col=rgb(red=0,blue=0,green=.6,alpha=0.2),pch=19,cex=1,alpha=0.2)#R1 Dusky
 #legend("bottomright",c("Male","Female","Dusky"),pch=c(19,19,19),col=c("cornflowerblue","red2","forestgreen"),bty = "n")
 #legend("bottomright",c("Black M","Black F", "Dark"),pch=c(19.19,19),col=c("red2","blue2","forestgreen"),bty = "n")
-legend("topleft",c("Black RF","Other"),pch=c(19,19),
+legend("topleft",c(Tspecies,"Other"),pch=c(19,19),
       col=c("black",rgb(red=0,blue=0,green=.8)),bty = "n")
 
 ############################Export Data########################################
-write.table(y2, "clipboard", sep="\t", row.names=FALSE)
+write.table(a, "clipboard", sep="\t", row.names=FALSE)
