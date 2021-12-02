@@ -58,7 +58,8 @@ plot_grid(LVB, LN, labels = "AUTO",ncol=1,nrow=2)
 table(filter(dataAll1,species==Tspecies)$outlierLVB, useNA = "always")
 table(filter(dataAll1,species==Tspecies)$outlierLN, useNA = "always")
 
-outliers<- dataAll1 %>% filter(outlierLVB=="out" | outlierLN=="out") 
-write.csv(outliers, "outliers.csv", sep=",", row.names=FALSE)
-write.csv(dataAll1, "outlier_results.csv", sep=",", row.names=FALSE)
+###Data export####
+outliers<- dataAll1 %>% filter(outlierLVB=="out" | outlierLN=="out") #make table of just outliers
+write.csv(outliers, "outliers.csv", sep=",", row.names=FALSE) #make csv of just outliers
+write.csv(dataAll1, "outlier_results.csv", sep=",", row.names=FALSE) #make csv of all data with outlier results
 
