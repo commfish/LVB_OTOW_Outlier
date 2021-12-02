@@ -1,7 +1,10 @@
 ######Put Queried data through estimated bounds#####
-#install.packages("cowplot")
-library(tidyverse)
-library(cowplot)
+
+if(!require("tidyverse"))   install.packages("tidyverse")
+if(!require("cowplot"))   install.packages("cowplot")
+if(!require("remotes"))   install.packages("remotes")
+if(!require("adfgcolors"))   remotes::install_github("justinpriest/adfgcolors")
+
 #plot data
 
 syx <- summary(ln.mod)$sigma
@@ -43,6 +46,7 @@ LVB<-ggplot(dataAll1) +
   geom_line(data=pred.predsum, aes(x=age, y=Sim.lw)) +
   geom_line(data=pred.predsum, aes(x=age, y=Sim.hi)) +
   labs(y="Fork Length (mm)",x="Age",color="Outliers by Species")+
+  scale_color_adfg(palette = "coho", discrete = TRUE, useexact = TRUE)+
   theme_classic() 
 
 LN<-ggplot(dataAll1) +
@@ -50,6 +54,7 @@ LN<-ggplot(dataAll1) +
   geom_line(data=a, aes(age, a[,2])) +
   geom_line(data=a, aes(age, a[,3])) +
   labs(y="Otolith Weight (g)",x="Age",color="Outliers by Species")+
+  scale_color_adfg(palette = "coho", discrete = TRUE, useexact = TRUE)+
   theme_classic() 
 
 plot_grid(LVB, LN, labels = "AUTO",ncol=1,nrow=2)

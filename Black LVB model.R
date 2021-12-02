@@ -14,18 +14,18 @@
 #source("http://www.rforge.net/FSATeach/InstallFSATeach.R")
 
 #####Load packages######
-library(FSA)
-library(nlstools)
-library(ggplot2)
-library(tcltk2)
-library(propagate)
-library(tidyverse)
-library(readxl)
+if(!require("FSA"))   install.packages("FSA")
+if(!require("nlstools"))   install.packages("nlstools")
+if(!require("propagate"))   install.packages("propagate")
+if(!require("ggplot2"))   install.packages("ggplot2")
+if(!require("tcltk2"))   install.packages("tcltk2")
+if(!require("tidyverse"))   install.packages("tidyverse")
+if(!require("readxl"))   install.packages("readxl")
 
 ##### Load data#########
 
 dataBDRF<-read_excel(file.choose()) 
-dataBDRF<-read_csv(file=file.choose())
+#dataBDRF<-read_csv(file=file.choose())
 
 
 #Rename columns####

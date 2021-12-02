@@ -14,11 +14,11 @@
 #Columns used are age, sex, length, otoW
 
 #####Load packages######
-library(FSA)
-library(ggplot2)
-library(tcltk2)
-library(tidyverse)
-library(readxl)
+if(!require("FSA"))   install.packages("FSA")
+if(!require("ggplot2"))   install.packages("ggplot2")
+if(!require("tcltk2"))   install.packages("tcltk2")
+if(!require("tidyverse"))   install.packages("tidyverse")
+if(!require("readxl"))   install.packages("readxl")
 
 
 ########################Load data#####################
