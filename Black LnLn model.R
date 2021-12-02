@@ -24,7 +24,7 @@ if(!require("readxl"))   install.packages("readxl")
 ########################Load data#####################
 
 dataBDRF<-read_excel(file.choose()) 
-dataBDRF<-read_csv(file=file.choose())
+#dataBDRF<-read_csv(file=file.choose())
 
 #Rename columns
 #Rename the 'FIELDS' with the columns from your data to change them to the naming convention used in the script

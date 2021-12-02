@@ -4,6 +4,7 @@ if(!require("tidyverse"))   install.packages("tidyverse")
 if(!require("cowplot"))   install.packages("cowplot")
 if(!require("remotes"))   install.packages("remotes")
 if(!require("adfgcolors"))   remotes::install_github("justinpriest/adfgcolors")
+if(!require("RColorBrewer"))  install.packages("RColorBrewer")
 
 #plot data
 
@@ -42,11 +43,12 @@ missing<-table(NAAGE=is.na(dataAll1$age), NALENG=is.na(dataAll1$length),NAOTOW=i
 write.table(missing, "clipboard", sep="\t")
 
 LVB<-ggplot(dataAll1) +
-  geom_point(data=dataAll1,aes(x=age,y=length,color=paste(outlierLVB,species)),alpha=0.2)+
+  geom_point(data=dataAll1,aes(x=age,y=length,color=paste(outlierLVB,species)),alpha=.5)+
   geom_line(data=pred.predsum, aes(x=age, y=Sim.lw)) +
   geom_line(data=pred.predsum, aes(x=age, y=Sim.hi)) +
   labs(y="Fork Length (mm)",x="Age",color="Outliers by Species")+
   scale_color_adfg(palette = "coho", discrete = TRUE, useexact = TRUE)+
+  guides(colour = guide_legend(override.aes = list(alpha = 1)))+
   theme_classic() 
 
 LN<-ggplot(dataAll1) +
