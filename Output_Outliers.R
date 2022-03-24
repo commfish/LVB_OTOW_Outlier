@@ -42,14 +42,22 @@ dataAll1 <- dataAll1  %>% mutate(outlierSpecies = if_else( length >= Sim.lw, "in
 missing<-table(NAAGE=is.na(dataAll1$age), NALENG=is.na(dataAll1$length),NAOTOW=is.na(dataAll1$otoW))
 write.table(missing, "clipboard", sep="\t")
 
-LVB<-ggplot(dataAll1) +
-  geom_point(data=dataAll1,aes(x=age,y=length,color=paste(outlierLVB,species)),alpha=.5)+
+
+dataBDRF4$Species_Code<-factor(dataBDRF4$Species_Code)
+dataBDRF4<-mutate(dataBDRF4,factor(Species_Code, levels=c("173","142")))
+
+(LVB<-ggplot(dataAll1) +
+  geom_point(aes(x=age,y=length,color=species),alpha=.5,position = "jitter")+
   geom_line(data=pred.predsum, aes(x=age, y=Sim.lw)) +
   geom_line(data=pred.predsum, aes(x=age, y=Sim.hi)) +
   labs(y="Fork Length (mm)",x="Age",color="Outliers by Species")+
-  scale_color_adfg(palette = "coho", discrete = TRUE, useexact = TRUE)+
-  guides(colour = guide_legend(override.aes = list(alpha = 1)))+
-  theme_classic() 
+  ylim(min(na.omit(dataBDRF$length)),max(na.omit(dataBDRF$length)))+
+  scale_color_brewer(palette="Set1")+
+  theme(legend.position = "bottom")+
+  theme_classic())
+#geom_point(data=subset(dataBDRF4,dataBDRF4$Species_Code=="173"),aes(x=Final_Age,y=Length*10,color=factor(Species_Code)),position = "jitter")+
+#geom_point(data=subset(dataBDRF4,dataBDRF4$Species_Code=="142"),aes(x=Final_Age,y=Length*10,color=factor(Species_Code)),position = "jitter")+
+#guides(colour = guide_legend(override.aes = list(alpha = 1)))+
 
 LN<-ggplot(dataAll1) +
   geom_point(aes(x=age, y=otoW, color = paste(outlierLN,species)), size = 3, alpha= 0.2) +

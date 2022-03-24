@@ -44,26 +44,32 @@ Tspecies<-"142" #set target species
 dataBDRF$species<-character(dataBDRF$species)
 dataBRF<-subset(dataBDRF,dataBDRF$species==Tspecies)
 
+
 ###############################Model#######################################
 #ln.mod<-lm(log(otoW)~I(log(age)),dataBRF) #linear Ln model
-ln.mod<-lm(log(otoW)~I(log(age))+age,dataBRF) #Ln +age model
+ln.mod<-lm(log(otoW)~log(age+0.00001)+age,dataBRF) #Ln +age model
 
-alphaln<-.99
+alphaln<-.95
 
-a<-data.frame(exp(predict(ln.mod,newdata=data.frame(age=seq(1,60,by=1)),interval="prediction",level=alphaln)))
-a$age<-seq(1,60,by=1)
+MaxAge<-max(dataBDRF$age)
+a<-data.frame(exp(predict(ln.mod,newdata=data.frame(age=seq(1,MaxAge,by=1)),interval="prediction",level=alphaln)))
+a$age<-seq(1,MaxAge,by=1)
 
 ####graphing; Ages offset .4-.2 to jitter plots#####
-plot(otoW ~ age, data=dataBRF,ylab= "Otolith Weight (g)",xlab="Age",pch=c(3),xlim=c(0,60),ylim=c(.05,.8),cex=0)
+plot(otoW ~ age, data=dataBRF,ylab= "Otolith Weight (g)",xlab="Age",pch=c(3),xlim=c(0,MaxAge),ylim=c(0,max(na.omit(dataBDRF$otoW))*1.1),cex=0)
 polygon(c(a$age, rev(a$age)), c(a[,2],rev(a[,3])), col = rgb(red=0,green=0,blue=0,alpha=0.1),lty = 0)
 points(otoW ~ I(age+0.2), data=dataBRF,col=rgb(red=0.1,green=0.1,blue=0.1,alpha=0.2),pch=19,cex=1)#R1 Black RF
+
+
+
 #points(otoW ~ I(age+0.2), data=dataBRF, subset=sex=="1",col=rgb(red=0,green=0,blue=0.8,alpha=0.2),pch=19,cex=1)#Male BRF
 #points(otoW ~ age, data=dataBRF, subset=sex=="2",col=rgb(red=.8,green=0,blue=0,alpha=0.2),pch=19,cex=1)#Female BRF
-points(otoW ~ I(age-0.2), data=dataBDRF, subset=species !=Tspecies,col=rgb(red=0,blue=0,green=.6,alpha=0.2),pch=19,cex=1,alpha=0.2)#R1 Dusky
+points(otoW ~ I(age-0.2), data=dataBDRF, subset=species!=Tspecies,col=rgb(red=0,blue=0,green=.6,alpha=0.2),pch=19,cex=1,alpha=0.2)#R1 Dusky
 #legend("bottomright",c("Male","Female","Dusky"),pch=c(19,19,19),col=c("cornflowerblue","red2","forestgreen"),bty = "n")
 #legend("bottomright",c("Black M","Black F", "Dark"),pch=c(19.19,19),col=c("red2","blue2","forestgreen"),bty = "n")
-legend("topleft",c(Tspecies,"Other"),pch=c(19,19),
+legend("topleft",c(unique(dataBDRF$area)[run],"Other"),pch=c(19,19),
       col=c("black",rgb(red=0,blue=0,green=.8)),bty = "n")
-
+plot(otoW ~ age, data=dataBRF,subset=age<5,ylim=c(0,30),xlim=c(0,5))
+abline(h=2.5)
 ############################Export Data########################################
-write.table(a, "clipboard", sep="\t", row.names=FALSE)
+write.table(a, "clipboard", sep="\t", row.names=FALSE, col.names = FALSE)
