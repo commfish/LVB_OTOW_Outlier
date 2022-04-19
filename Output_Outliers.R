@@ -43,18 +43,29 @@ missing<-table(NAAGE=is.na(dataAll1$age), NALENG=is.na(dataAll1$length),NAOTOW=i
 write.table(missing, "clipboard", sep="\t")
 
 
-dataBDRF4$Species_Code<-factor(dataBDRF4$Species_Code)
-dataBDRF4<-mutate(dataBDRF4,factor(Species_Code, levels=c("173","142")))
+dataBDRF$Species_Code<-factor(dataBDRF$Species_Code)
+dataBDRF<-mutate(dataBDRF,factor(Species_Code, levels=c("173","142")))
 
 (LVB<-ggplot(dataAll1) +
-  geom_point(aes(x=age,y=length,color=species),alpha=.5,position = "jitter")+
+  geom_point(aes(x=age,y=length,color=paste(dataAll1$species,dataAll1$outlierSpecies)),alpha=.5,position = "jitter")+
   geom_line(data=pred.predsum, aes(x=age, y=Sim.lw)) +
-  geom_line(data=pred.predsum, aes(x=age, y=Sim.hi)) +
+  #geom_line(data=pred.predsum, aes(x=age, y=Sim.hi)) +
   labs(y="Fork Length (mm)",x="Age",color="Outliers by Species")+
   ylim(min(na.omit(dataBDRF$length)),max(na.omit(dataBDRF$length)))+
   scale_color_brewer(palette="Set1")+
   theme(legend.position = "bottom")+
   theme_classic())
+
+#(LVB<-ggplot() +
+ #   geom_point(subset(dataAll1, sex==c("M","1")), mapping=aes(x=age,y=length,color=paste(subset(dataAll1, sex==c("M","1"))$outlierMales)),alpha=.5,position = "jitter")+
+  #  geom_point(subset(dataAll1, sex==c("F","2")), mapping=aes(x=age,y=length,color=paste(subset(dataAll1, sex==c("F","2"))$outlierFemales)),alpha=.5,position = "jitter")+
+   # geom_line(data=pred.predsum, aes(x=age, y=Sim.lw)) +
+    #geom_line(data=pred.predsum, aes(x=age, y=Sim.hi)) +
+    #labs(y="Fork Length (mm)",x="Age",color="Outliers by Species")+
+    #ylim(min(na.omit(dataBDRF$length)),max(na.omit(dataBDRF$length)))+
+    #scale_color_brewer(palette="Set1")+
+    #theme(legend.position = "bottom")+
+    #theme_classic())
 #geom_point(data=subset(dataBDRF4,dataBDRF4$Species_Code=="173"),aes(x=Final_Age,y=Length*10,color=factor(Species_Code)),position = "jitter")+
 #geom_point(data=subset(dataBDRF4,dataBDRF4$Species_Code=="142"),aes(x=Final_Age,y=Length*10,color=factor(Species_Code)),position = "jitter")+
 #guides(colour = guide_legend(override.aes = list(alpha = 1)))+
@@ -69,12 +80,14 @@ LN<-ggplot(dataAll1) +
 
 plot_grid(LVB, LN, labels = "AUTO",ncol=1,nrow=2)
 
-
-table(filter(dataAll1,species==Tspecies)$outlierLVB, useNA = "always")
+table(dataAll1)
+length(unique(paste(dataAll1$YEAR,dataAll1$MONTH,dataAll1$DAY,dataAll1$PAGE," ",dataAll1$LINE)))
+table(filter(dataAll1,species==Tspecies)$outlierSpecies, useNA = "always")
+table(filter(dataAll1,species==Tspecies)$outlierSpecies, useNA = "always")
 table(filter(dataAll1,species==Tspecies)$outlierLN, useNA = "always")
-
+table(dataAll1[!duplicated(filter(dataAll1,species==Tspecies)[,c('YAER','PAGE','LINE')]),]$outlierSpecies, useNA = "always")
 ###Data export####
-outliers<- dataAll1 %>% filter(outlierLVB=="out" | outlierLN=="out") #make table of just outliers
-write.csv(outliers, "outliers.csv", sep=",", row.names=FALSE) #make csv of just outliers
-write.csv(dataAll1, "outlier_results.csv", sep=",", row.names=FALSE) #make csv of all data with outlier results
+outliers<- dataAll1 %>% filter(outlierSpecies=="out") #make table of just outliers
+write.csv(outliers, "outliers_RII_Elisa.csv", sep=",", row.names=FALSE) #make csv of just outliers
+write.csv(dataAll1, "outlier_results_RII_Elisa.csv", sep=",", row.names=FALSE) #make csv of all data with outlier results
 

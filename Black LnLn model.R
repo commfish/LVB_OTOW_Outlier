@@ -49,7 +49,7 @@ dataBRF<-subset(dataBDRF,dataBDRF$species==Tspecies)
 #ln.mod<-lm(log(otoW)~I(log(age)),dataBRF) #linear Ln model
 ln.mod<-lm(log(otoW)~log(age+0.00001)+age,dataBRF) #Ln +age model
 
-alphaln<-.95
+alphaln<-.99
 
 MaxAge<-max(dataBDRF$age)
 a<-data.frame(exp(predict(ln.mod,newdata=data.frame(age=seq(1,MaxAge,by=1)),interval="prediction",level=alphaln)))
