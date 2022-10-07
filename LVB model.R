@@ -22,7 +22,7 @@ if(!require("tcltk2"))   install.packages("tcltk2")
 if(!require("tidyverse"))   install.packages("tidyverse")
 if(!require("readxl"))   install.packages("readxl")
 if(!require("plotly"))   install.packages("plotly")
-
+if(!require("rmarkdown"))   install.packages("rmarkdown")
 ##### Load data#########
 
 dataBDRF4<-read_excel(file.choose()) 
@@ -56,7 +56,7 @@ ggplot(dataBDRF,aes(otoW,length,label=paste(SAMPLE," ",ID),col=as.factor(METHOD)
   geom_jitter(size=2)+
   theme_classic()
 ggplotly()
-z#####Model######
+#####Model######
 
 svTypical<-vbStarts(length~age,data=dataBRF,fixed=list(K=0.2,t0=-1),plot=TRUE,na.omit=TRUE)
 #svTypical <- list(Linf=530,K=0.09,t0=-1)# black rockfish starting values 

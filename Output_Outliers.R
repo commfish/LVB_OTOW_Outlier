@@ -32,7 +32,7 @@ dataAll1<-merge(dataAll1,pred.predsumF, by= "age", all.x= TRUE, )
 dataAll1 <- dataAll1  %>% mutate(outlierLVB = if_else( length >= Sim.lw & length<= Sim.hi, "in", "out"))
 dataAll1 <- dataAll1  %>% mutate(outlierLN = if_else( otoW >= lnlow & otoW<= lnhi, "in", "out"))
 
-#####R4 species and sex outlier ID###########
+#####species and sex outlier ID###########
 dataAll1 <- dataAll1  %>% mutate(outlierMales = if_else( sex==c("M","1") & length <= M.Sim.hi & length >= M.Sim.lw, "in", "out")) 
 dataAll1 <- dataAll1  %>% mutate(outlierFemales = if_else( sex==c("F","2") & length <= F.Sim.hi & length >= F.Sim.lw, "in", "out"))
 dataAll1 <- dataAll1  %>% mutate(outlierSpecies = if_else( length >= Sim.lw, "in", "out"))
@@ -44,8 +44,9 @@ write.table(missing, "clipboard", sep="\t")
 
 
 dataBDRF$Species_Code<-factor(dataBDRF$Species_Code)
-dataBDRF<-mutate(dataBDRF,factor(Species_Code, levels=c("173","142")))
+#dataBDRF<-mutate(dataBDRF,factor(Species_Code, levels=c("173","142"))) #set the level order for plotting
 
+#generic plot
 (LVB<-ggplot(dataAll1) +
   geom_point(aes(x=age,y=length,color=paste(dataAll1$species,dataAll1$outlierSpecies)),alpha=.5,position = "jitter")+
   geom_line(data=pred.predsum, aes(x=age, y=Sim.lw)) +
@@ -56,6 +57,7 @@ dataBDRF<-mutate(dataBDRF,factor(Species_Code, levels=c("173","142")))
   theme(legend.position = "bottom")+
   theme_classic())
 
+#sex specific plot
 #(LVB<-ggplot() +
  #   geom_point(subset(dataAll1, sex==c("M","1")), mapping=aes(x=age,y=length,color=paste(subset(dataAll1, sex==c("M","1"))$outlierMales)),alpha=.5,position = "jitter")+
   #  geom_point(subset(dataAll1, sex==c("F","2")), mapping=aes(x=age,y=length,color=paste(subset(dataAll1, sex==c("F","2"))$outlierFemales)),alpha=.5,position = "jitter")+
@@ -80,14 +82,16 @@ LN<-ggplot(dataAll1) +
 
 plot_grid(LVB, LN, labels = "AUTO",ncol=1,nrow=2)
 
+#summarize values
 table(dataAll1)
 length(unique(paste(dataAll1$YEAR,dataAll1$MONTH,dataAll1$DAY,dataAll1$PAGE," ",dataAll1$LINE)))
 table(filter(dataAll1,species==Tspecies)$outlierSpecies, useNA = "always")
 table(filter(dataAll1,species==Tspecies)$outlierSpecies, useNA = "always")
 table(filter(dataAll1,species==Tspecies)$outlierLN, useNA = "always")
 table(dataAll1[!duplicated(filter(dataAll1,species==Tspecies)[,c('YAER','PAGE','LINE')]),]$outlierSpecies, useNA = "always")
+
 ###Data export####
 outliers<- dataAll1 %>% filter(outlierSpecies=="out") #make table of just outliers
-write.csv(outliers, "outliers_RII_Elisa.csv", sep=",", row.names=FALSE) #make csv of just outliers
-write.csv(dataAll1, "outlier_results_RII_Elisa.csv", sep=",", row.names=FALSE) #make csv of all data with outlier results
+write.csv(outliers, "outliers_only.csv", sep=",", row.names=FALSE) #make csv of just outliers
+write.csv(dataAll1, "outlier_results_all.csv", sep=",", row.names=FALSE) #make csv of all data with outlier results
 
