@@ -25,25 +25,29 @@ if(!require("plotly"))   install.packages("plotly")
 if(!require("rmarkdown"))   install.packages("rmarkdown")
 ##### Load data#########
 
-dataBDRF4<-read_excel(file.choose()) 
-#dataBDRF<-read_csv(file=file.choose())
-#dataBDRF<-dataAll
 
-#Rename columns####
+dataBDRF<-read_excel(file.choose()) 
+#dataBDRF<-read_csv(file=file.choose())
+
+#Rename columns
 #Rename the 'FIELDS' with the columns from your data to change them to the naming convention used in the script
 
 CN_age<-'AGE'
-CN_length<-'LENGTH'
-CN_sex<-'SEX'
-CN_species<-'SPECIES'
-CN_otoW<-'OTOW'
-dataBDRF<- dataAll %>% rename(age=all_of(CN_age),length=all_of(CN_length),sex=all_of(CN_sex),species=all_of(CN_species),otoW=all_of(CN_otoW))
-#dataBDRF<- dataBDRF %>% rename(area='MANAGEMENT_AREA_CODE')
+CN_length<-'SPECIMEN.LENGTH'
+CN_sex<-'GENDER_CODE'
+CN_species<-'FIELD_SPECIES_CODE'
+CN_otoW<-'AGE_STRUCTURE.WEIGHT'
+dataBDRF<- dataBDRF %>% rename(age=CN_age,length=CN_length,sex=CN_sex,species=CN_species,otoW=CN_otoW)
+
 if(max(dataBDRF$length,na.rm = TRUE)<200){
   dataBDRF$length<-dataBDRF$length*10 #convert cm to mm length
 }
 
+Tspecies<-"142" #set target species
+dataBDRF$species<-character(dataBDRF$species)
+dataBRF<-subset(dataBDRF,dataBDRF$species==Tspecies)
 dataBDRF<-subset(dataBDRF,dataBDRF$age >-0.1)
+
 ###Assign target species
 Tspecies<-"142" #Target species name from species column
 dataBDRF$species<-character(dataBDRF$species)
@@ -105,10 +109,10 @@ pred.predsumF$age<-seq(0,MaxAge,by=1)
 
 #Not sex specific
 #windows(5,4)
-plot(length ~ age, data=dataBRF4,ylab= "Total Length (mm)",xlab="Age",pch=c(3),cex=0,ylim=c(200,max(na.omit(dataBDRF4$length))),xlim=c(0,MaxAge))
+plot(length ~ age, data=dataBDRF,ylab= "Total Length (mm)",xlab="Age",pch=c(3),cex=0,ylim=c(200,max(na.omit(dataBDRF$length))),xlim=c(0,MaxAge))
 polygon(c(pred.predsum$age, rev(pred.predsum$age)), c(pred.predsum[, 11],rev(pred.predsum[, 12])), col = "light blue",lty = 0)
-points(length ~ I(age+0.5), data=dataBDRF4, subset= species!=Tspecies,col="red",pch=19,cex=1)#R1 Dusky
-points(length ~ I(age), data=dataBRF4, col= "black" ,pch=19,cex=1)# R1 Black
+points(length ~ I(age+0.5), data=dataBDRF, subset= species!=Tspecies,col="red",pch=19,cex=1)#R1 Dusky
+points(length ~ I(age), data=dataBRF, col= "black" ,pch=19,cex=1)# R1 Black
 legend("bottomright",c("Black Rockfish","Other"),pch=c(19,19),col=c("black","red"),bty = "n")
 #savePlot("clipboard", type="wmf") #saves plot to WMF
 
