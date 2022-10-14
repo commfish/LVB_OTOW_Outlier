@@ -24,3 +24,5 @@ outliers_RII_Elisa.csv
 gitcertificate.cer
 certificate.cer
 .RDataTmp1
+outlier_results_all.csv
+outliers_only.csv
