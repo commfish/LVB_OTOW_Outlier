@@ -29,8 +29,23 @@ dataAll1$lnhi <- ((predict(ln.mod, newdata = dataAll1, interval="prediction",lev
 dataAll1<-merge(dataAll1,pred.predsum, by= "age", all.x= TRUE, )
 dataAll1<-merge(dataAll1,pred.predsumM, by= "age", all.x= TRUE, )
 dataAll1<-merge(dataAll1,pred.predsumF, by= "age", all.x= TRUE, )
+if("otoW" %in% colnames(dataAll1)){
+  dataAll1 <- dataAll1  %>% mutate(outlierLN = if_else( otoW >= lnlow & otoW<= lnhi, "in", "out"))
+  dataAll1 <- dataAll1  %>% mutate(outlierLVB = if_else( length >= Sim.lw & length<= Sim.hi, "in", "out"))
+}else {
 dataAll1 <- dataAll1  %>% mutate(outlierLVB = if_else( length >= Sim.lw & length<= Sim.hi, "in", "out"))
-dataAll1 <- dataAll1  %>% mutate(outlierLN = if_else( otoW >= lnlow & otoW<= lnhi, "in", "out"))
+}
+
+#####sex outlier ID###########
+if("otoW" %in% colnames(dataAll1)){
+  dataAll1 <- dataAll1  %>% mutate(outlierLN = if_else( otoW >= lnlow & otoW<= lnhi, "in", "out"))
+  dataAll1 <- dataAll1  %>% mutate(outlierLVB = if_else( length >= Sim.lw & length<= Sim.hi, "in", "out"))
+}else {
+  dataAll1 <- dataAll1  %>% mutate(outlierSex = case_when(
+  sex=="M" & length <= M.Sim.hi & length >= M.Sim.lw ~ "in",
+  sex=="F" & length <= F.Sim.hi & length >= F.Sim.lw ~ "in",
+  TRUE ~ "out"))
+}
 
 #####species and sex outlier ID###########
 dataAll1 <- dataAll1  %>% mutate(outlierMales = if_else( sex==c("M","1") & length <= M.Sim.hi & length >= M.Sim.lw, "in", "out")) 
