@@ -26,3 +26,5 @@ certificate.cer
 .RDataTmp1
 outlier_results_all.csv
 outliers_only.csv
+outlier_LW_results_all.csv
+outliers_LW_only.csv
