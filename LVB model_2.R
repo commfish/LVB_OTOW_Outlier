@@ -107,11 +107,14 @@ ggplot(nlregdf,aes(x=age)) +
   theme_classic()
 
 #residual plot
-tmp <- dplyr::select(dataYRF,length,age) %>%
+rm(tmp)
+tmp <- filter(dataYRF, !is.na(age) & !is.na(length)) %>%
+  dplyr::select(length,age) %>%
   dplyr::mutate(fits=fitted(fitTypical),
                 resids=resid(fitTypical),
                 sresids=nlstools::nlsResiduals(fitTypical)$resi2[,"Standardized residuals"])
-
+length(filter(dataYRF, !is.na(age) & !is.na(length))$age)
+length()
 fit1<- ggplot(data=tmp,mapping=aes(x=resids)) +
   geom_histogram(color="gray30",fill="gray70",binwidth=0.5) +
   scale_y_continuous(expand=expansion(mult=c(0,0.05)))+
@@ -204,9 +207,14 @@ dataAll1<-merge(dataAll1,pred.predsumF, by= "age", all.x= TRUE, )
 dataAll1 <- dataAll1  %>% mutate(outlierLVB = if_else( length >= Sim.lw & length<= Sim.hi, "in", "out"))
 
 #####sex outlier ID###########
+
+dataAll1$sex<-as.character(dataAll1$sex)
+
 dataAll1 <- dataAll1  %>% mutate(outlierSex = case_when(
-  sex=="M" & length <= M.Sim.hi & length >= M.Sim.lw ~ "in",
-  sex=="F" & length <= F.Sim.hi & length >= F.Sim.lw ~ "in",
+  sex %in% c("M","1") & length <= M.Sim.hi & length >= M.Sim.lw ~ "in",
+  sex %in% c("F","2") & length <= F.Sim.hi & length >= F.Sim.lw ~ "in",
+  sex %in% c(NA,"9") & length >= Sim.lw & length<= Sim.hi~ "in",
+  is.na(age) | is.na(length) ~ as.character(NA),
   TRUE ~ "out"))
 
 #Identify data with missing values####
@@ -227,8 +235,8 @@ write.table(missing, "clipboard", sep="\t")
 
 #sex specific plot
 (LVB<-ggplot() +
-   geom_point(subset(dataAll1, sex=="M"), mapping=aes(x=age,y=length,color=paste(subset(dataAll1, sex=="M")$outlierSex,subset(dataAll1, sex=="M")$sex)),alpha=.5,position = "jitter")+
-   geom_point(subset(dataAll1, sex=="F"), mapping=aes(x=age,y=length,color=paste(subset(dataAll1, sex=="F")$outlierSex,subset(dataAll1, sex=="F")$sex)),alpha=.5,position = "jitter")+
+   geom_point(subset(dataAll1, sex %in% c("M","1")), mapping=aes(x=age,y=length,color=paste(subset(dataAll1, sex %in% c("M","1"))$outlierSex,subset(dataAll1, sex %in% c("M","1"))$sex)),alpha=.5,position = "jitter")+
+   geom_point(subset(dataAll1, sex%in% c("F","2")), mapping=aes(x=age,y=length,color=paste(subset(dataAll1, sex%in% c("F","2"))$outlierSex,subset(dataAll1, sex%in% c("F","2"))$sex)),alpha=.5,position = "jitter")+
     geom_line(data=pred.predsumF, aes(x=age, y=F.Sim.lw),color="red") +
     geom_line(data=pred.predsumF, aes(x=age, y=F.Sim.hi),color="red") +
     geom_line(data=pred.predsumM, aes(x=age, y=M.Sim.lw),color="blue") +
