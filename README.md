@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## General Use
 
-This Project was initiated to find outliers in fisheries data for both length at age and otolith weight at age. For length at age models, we used a LVB model following modeling from Ogle (2015) and Monte Carlo prediction intervals using package {predict}. Otolith weight models are Ln:Ln models based on exponential growth models outlined in Ogle (2015).
+This Project was initiated to find outliers in fisheries data for both length at age and otolith weight at age. For length at age models, we used a LVB model following modeling from Ogle (2015) and Monte Carlo prediction intervals using package {predict}. Otolith weight models are Ln:Ln models based on exponential growth models outlined in Ogle (2015).The LVB model_2.R and Length_Weight model_2.R are standalone files that can be used to detect outliers for either length:age, or length:weight data. The LVB and LnLn otolith model files require the Output_Outliers script to finalize the dataframe and flag potential errors.  
 
 ## LVB Models
 
